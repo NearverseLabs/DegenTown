@@ -1,88 +1,31 @@
 import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
-import Tabs from "@mui/material/Tabs";
-import Grid from "@mui/material/Grid";
-import Slide from "@mui/material/Slide";
 import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
-import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import PropTypes from "prop-types";
-import { styled } from "@mui/material/styles";
-import { ConnectedWalletAccount, Contract } from "near-api-js";
-import { createNotify, savecoinflipResult } from "../utils/service";
-import moment from "moment";
 
-import TwitterIcon from "@mui/icons-material/Twitter";
-import CloseIcon from "@mui/icons-material/Close";
-import { useLocation } from "react-router-dom";
-import { decode } from "base-64";
-import { DOMAIN, SERVER_URL } from "../config/config";
-import {
-  RaffleContractAddress,
-  TokenContractAddress,
-} from "../config/contract";
-import { useRef } from "react";
-import {
-  ButtonGroup,
-  Collapse,
-  Divider,
-  InputBase,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  ListSubheader,
-} from "@mui/material";
-
-import coinflag from "../assets/img/coinflag.svg";
-import uploadIcon from "../assets/img/upload.svg";
-import discord from "../assets/discord.svg";
-import nftImage from "../assets/img/nft.svg";
-import discordIcon from "../assets/img/discordIcon.svg";
-import ExpandMore from "../assets/img/upIcon.svg";
-import ExpandLess from "../assets/img/downIcon.svg";
-import redCoin from "../assets/headsCoin.webp";
-import yrect from "../assets/img/yrect.svg";
-import bbtn from "../assets/img/bbtn.svg";
-import bgTable from "../assets/img/bgTable.svg";
-import tossCoin from "../assets/img/tossCoin.svg";
-import tailCoin from "../assets/tailsCoin.webp";
-import randomCoin from "../assets/randomCoin.webp";
-import option from "../assets/img/option.svg";
-import option2 from "../assets/img/1day.svg";
+import { InputBase } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
+import TableRow from "@mui/material/TableRow";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
+import TableContainer from "@mui/material/TableContainer";
 import TablePagination from "@mui/material/TablePagination";
-import TableRow from "@mui/material/TableRow";
-import BigNumber from "bignumber.js";
-import { toast } from "react-toastify";
-import { LoadingButton } from "@mui/lab";
-import floor from "floor";
-import { useWallet } from "@manahippo/aptos-wallet-adapter";
-import {
-  AptosClient,
-  AptosAccount,
-  FaucetClient,
-  TokenClient,
-  CoinClient,
-} from "aptos";
-import { NODE_URL, FAUCET_URL, aptosCoinStore } from "../config/section";
-import axios from "axios";
 import HistoryIcon from "@mui/icons-material/History";
+import { LoadingButton } from "@mui/lab";
+
+import { toast } from "react-toastify";
+import floor from "floor";
+import axios from "axios";
+
+import yrect from "../assets/img/yrect.svg";
+import coinflag from "../assets/img/coinflag.svg";
+import bgTable from "../assets/img/bgTable.svg";
+import tossCoin from "../assets/img/tossCoin.svg";
+import option from "../assets/img/option.svg";
+
+import { createNotify, savecoinflipResult } from "../utils/service";
+import { SERVER_URL } from "../config/config";
 
 const APTOS_RPC = "https://fullnode.mainnet.aptoslabs.com/v1";
 const columns = [
@@ -119,12 +62,8 @@ const leaderboard_columns = [
 var effectFlag = false;
 
 export default function CoinFlip() {
-  const client = new AptosClient(NODE_URL);
-  const coinClient = new CoinClient(client);
-
   const wallettype = localStorage.getItem("walletflag");
   const disData = JSON.parse(localStorage.getItem("discordUser"));
-  const { signAndSubmitTransaction } = useWallet();
   const [page, setPage] = useState(0);
   const [tosscoinresult, settosscoinresult] = useState("");
   const [rowsPerPage, setRowsPerPage] = useState(10);

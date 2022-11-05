@@ -1,97 +1,73 @@
-import React, { useState, useEffect } from "react";
-import Tab from "@mui/material/Tab";
+import React, { useState, useEffect, useRef } from "react";
+
 import Box from "@mui/material/Box";
-import Tabs from "@mui/material/Tabs";
 import Grid from "@mui/material/Grid";
 import Slide from "@mui/material/Slide";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import Container from "@mui/material/Container";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
-import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import PropTypes from "prop-types";
 import { styled } from "@mui/material/styles";
-import { Contract } from "near-api-js";
-import Bignumber from "bignumber.js";
-import { CLIENT_ID, DOMAIN } from "../config/config";
 import {
-  buyRaffleTicket,
-  createNotify,
-  getRaffles,
-  getWinner,
-  getState,
-  getNFTimageURL,
-  checkAdmin,
-  createRaffle,
-  createNewWLRaffle,
-  checkNFT,
-} from "../utils/service";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
-import moment from "moment";
-import discord from "../assets/discord.svg";
-import TwitterIcon from "@mui/icons-material/Twitter";
-import CloseIcon from "@mui/icons-material/Close";
-import { useLocation } from "react-router-dom";
-import { decode } from "base-64";
-import {
-  RaffleContractAddress,
-  TokenContractAddress,
-} from "../config/contract";
-import { useRef } from "react";
-import uploadIcon from "../assets/img/upload.svg";
-import nftImage from "../assets/img/nft.svg";
-import discordIcon from "../assets/img/discordIcon.svg";
-import {
-  ButtonGroup,
   Checkbox,
   Collapse,
-  Divider,
   FormControlLabel,
   List,
   ListItemButton,
-  ListItemIcon,
   ListItemText,
-  ListSubheader,
   Modal,
 } from "@mui/material";
-import ExpandMore from "../assets/img/upIcon.svg";
-import ExpandLess from "../assets/img/downIcon.svg";
-import { useWeb3React } from "@web3-react/core";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import LoadingButton from "@mui/lab/LoadingButton";
-import abi from "../config/wallet/erc20.json";
+import SendIcon from "@mui/icons-material/Send";
+import TwitterIcon from "@mui/icons-material/Twitter";
+import CloseIcon from "@mui/icons-material/Close";
+
+import Bignumber from "bignumber.js";
+import moment from "moment";
 import Web3 from "web3";
-import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import axios from "axios";
+import floor from "floor";
+
+import { useWeb3React } from "@web3-react/core";
+import { useWallet } from "@solana/wallet-adapter-react";
 import {
   Connection,
-  Keypair,
   Transaction,
   SystemProgram,
   PublicKey,
   LAMPORTS_PER_SOL,
   clusterApiUrl,
 } from "@solana/web3.js";
-import axios from "axios";
-import floor from "floor";
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   Token,
   TOKEN_PROGRAM_ID,
 } from "@solana/spl-token";
+
 import { web3 as solWeb3 } from "@project-serum/anchor";
-import SendIcon from "@mui/icons-material/Send";
-import { AptosClient, AptosAccount, CoinClient, FaucetClient } from "aptos";
-import { NODE_URL, FAUCET_URL } from "../config/section";
+import uploadIcon from "../assets/img/upload.svg";
+import discordIcon from "../assets/img/discordIcon.svg";
+import ExpandMore from "../assets/img/upIcon.svg";
+import ExpandLess from "../assets/img/downIcon.svg";
+
+import abi from "../config/wallet/erc20.json";
+import { CLIENT_ID, DOMAIN } from "../config/config";
+import {
+  buyRaffleTicket,
+  createNotify,
+  getRaffles,
+  getWinner,
+  checkAdmin,
+  createNewWLRaffle,
+} from "../utils/service";
 
 const web3 = new Web3(window.ethereum);
 
@@ -122,19 +98,6 @@ const CDialog = styled(Dialog)(({ theme }) => ({
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="left" ref={ref} {...props} />;
 });
-
-const PublicButton = styled(Button)(({ theme }) => ({
-  color: "white",
-  // backgroundColor: '#075985',
-  textTransform: "unset",
-  borderRadius: "20px",
-}));
-const GButton = styled(Button)(({ theme }) => ({
-  color: "white",
-  background: "linear-gradient(90deg, #F7BB14 0%, #EC6C0D 103.59%)",
-  borderRadius: "6px",
-  textTransform: "unset",
-}));
 
 const BootstrapDialogTitle = (props) => {
   const { children, onClose, ...other } = props;
@@ -192,20 +155,15 @@ const CardRaffle = ({ data, isOpen, getData, walletFlag }) => {
   const solwallet = useWallet();
   const connection = new Connection(clusterApiUrl("mainnet-beta"));
   const [open, setOpen] = useState(false);
-  const [address, setAddress] = useState(
-    "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
-  );
+  const address = "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48";
   const [ticketAmount, setticketAmount] = useState(1);
   const [loading, setloading] = useState(false);
-  const { active, account, library, connector, activate, deactivate } =
-    useWeb3React();
-  const signWallet = useWeb3React();
+  const { active, account } = useWeb3React();
 
   const [unique, setUniquDiscordUser] = useState(0);
   const [spentPrice, setSpentToken] = useState(0);
   const [spent, setTicketSold] = useState(0);
   const [ownTicket, setYourTicket] = useState(0);
-  const [solprice, setSolprice] = useState(0);
   const [winners, setWinners] = useState([]);
   const [detailFlag, setDetailFlag] = useState(false);
   const solUsdc = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
@@ -992,233 +950,6 @@ const CardRaffle = ({ data, isOpen, getData, walletFlag }) => {
           </List>
         </Box>
       </Box>
-      {/* <Box
-        sx={{
-          borderRadius: "20px",
-          border: "1px solid black",
-          height: "100%",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-          }}
-        >
-          <div style={{ flex: "1" }}></div>
-          <div
-            style={{
-              padding: "10px",
-              textAlign: "center",
-              borderTopRightRadius: "20px",
-              background: "rgba(209, 220, 242, 1)",
-            }}
-          >
-            {isOpen
-              ? endTimeSeconds > 0
-                ? `Ends in ${Math.floor(endTimeSeconds / 3600)}h ${Math.floor(
-                    (endTimeSeconds % 3600) / 60
-                  )}m ${(endTimeSeconds % 3600) % 60}s`
-                : "Winner selecting..."
-              : "Ended"}
-          </div>
-        </div>
-        <div
-          style={{
-            padding: "0px 20px 24px 20px",
-            borderBottom: "1px solid gray",
-          }}
-        >
-          <div
-            style={{
-              justifyContent: "center",
-              display: "flex",
-              paddingTop: "12px",
-            }}
-          >
-            <img
-              src={`${DOMAIN}/${data.image}`}
-              style={{
-                borderRadius: "5px",
-                border: "1px solid gray",
-                width: "100%",
-                height: "200px",
-              }}
-            />
-          </div>
-          <div style={{ display: "flex" }}>
-            <div>
-              <h3>{data.name}</h3>
-            </div>
-            <div style={{ flex: "1" }}></div>
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <a
-                href={data.tweeter !== "" ? data.tweeter : "#"}
-                target="_blank"
-              >
-                <IconButton
-                  color="primary"
-                  aria-label="upload picture"
-                  component="label"
-                  sx={{ color: "black" }}
-                >
-                  <TwitterIcon />
-                </IconButton>
-              </a>
-              <a
-                href={data.discord !== "" ? data.discord : "#"}
-                target="_blank"
-              >
-                <IconButton
-                  color="primary"
-                  aria-label="upload picture"
-                  component="label"
-                >
-                  <img src={discordIcon} />
-                </IconButton>
-              </a>
-            </div>
-          </div>
-          <div style={{ height: "80px" }}>{data.description}</div>
-          <div style={{ display: "flex" }}>
-            <h3>Ticket Price</h3>
-            <div style={{ flex: "1" }}></div>
-            <h3>{data.price} USD</h3>
-          </div>
-          <div style={{ display: "flex" }}>
-            <h3 style={{ marginTop: "0px" }}>Your Tickets</h3>
-            <div style={{ flex: "1" }}></div>
-            <h3 style={{ marginTop: "0px" }}>{ownTicket}</h3>
-          </div>
-          {isOpen ? (
-            disData ? (
-              <div style={{ display: "flex", gap: "20px" }}>
-                <TextField
-                  id="outlined-basic"
-                  variant="outlined"
-                  inputProps={{ style: { color: "white" } }}
-                  type="number"
-                  sx={{
-                    bgcolor: "#1B1F24",
-                    borderRadius: "5px",
-                  }}
-                  value={ticketAmount}
-                  onChange={(e) => {
-                    setticketAmount(e.target.value);
-                  }}
-                  disabled={loading}
-                />
-                <LoadingButton
-                  size="small"
-                  onClick={buyTicket}
-                  fullWidth
-                  endIcon={<SendIcon />}
-                  loading={loading}
-                  loadingPosition="end"
-                  variant="contained"
-                  className="btn"
-                >
-                  Buy Ticket
-                </LoadingButton>
-              </div>
-            ) : (
-              <Button
-                onClick={handleDiscordLogin}
-                sx={{
-                  textTransform: "unset",
-                  mr: "20px",
-                  bgcolor: "#512da8 !important",
-                  fontSize: "16px",
-                  fontWeight: "bold",
-                  p: "10px",
-                }}
-                variant="contained"
-                size="large"
-                className="btn"
-                fullWidth
-              >
-                Login With Discord
-              </Button>
-            )
-          ) : (
-            <div style={{ display: "flex", gap: "20px" }}>
-              <Button
-                className="btn"
-                fullWidth
-                disabled={data.winner === "No Winner"}
-                onClick={handleClickOpen}
-              >
-                View Winners
-              </Button>
-            </div>
-          )}
-        </div>
-        <List
-          sx={{ bgcolor: "white", borderRadius: "0px 0px 20px 20px" }}
-          component="nav"
-        >
-          <ListItemButton
-            onClick={handleClick}
-            sx={{ justifyContent: "center", display: "flex" }}
-          >
-            {detailFlag ? (
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <ListItemText
-                  primary={<h3 style={{ margin: "0px" }}>Hide</h3>}
-                />
-                <img src={ExpandMore} />
-              </div>
-            ) : (
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <ListItemText
-                  primary={<h3 style={{ margin: "0px" }}>More Details</h3>}
-                />
-                <img src={ExpandLess} />
-              </div>
-            )}
-          </ListItemButton>
-          <Collapse in={detailFlag} timeout="auto" unmountOnExit>
-            <List component="div" disablePadding>
-              <ListItemButton sx={{ px: "20px" }}>
-                <h3 style={{ margin: "0px" }}>Winners</h3>
-                <div style={{ flex: "1" }}></div>
-                <h3 style={{ margin: "0px" }}>{data.winnerNum}</h3>
-              </ListItemButton>
-              <ListItemButton sx={{ px: "20px" }}>
-                <h3 style={{ margin: "0px" }}>$USD Spent</h3>
-                <div style={{ flex: "1" }}></div>
-                <h3 style={{ margin: "0px" }}>{spentPrice.toFixed(3)}</h3>
-              </ListItemButton>
-              <ListItemButton sx={{ px: "20px" }}>
-                <h3 style={{ margin: "0px" }}>Unique Users</h3>
-                <div style={{ flex: "1" }}></div>
-                <h3 style={{ margin: "0px" }}>{unique}</h3>
-              </ListItemButton>
-              <ListItemButton sx={{ px: "20px" }}>
-                <h3 style={{ margin: "0px" }}>Tickets Sold</h3>
-                <div style={{ flex: "1" }}></div>
-                <h3 style={{ margin: "0px" }}>{spent.toFixed(3)}</h3>
-              </ListItemButton>
-              <Box
-                sx={{
-                  display: "flex",
-                  py: "30px",
-                  gap: "12px",
-                  justifyContent: "center",
-                }}
-              >
-                <Button
-                  className="btnBlack"
-                  sx={{
-                    borderRadius: "20px",
-                  }}
-                >
-                  WL Raffle
-                </Button>
-              </Box>
-            </List>
-          </Collapse>
-        </List>
-      </Box> */}
       <CDialog
         open={open}
         TransitionComponent={Transition}

@@ -1,54 +1,36 @@
-import { useState, useEffect, useRef } from "react";
-// import { useWallet } from "./contexts/accounts";
+import { useState, useEffect } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
 
-import Sidebar from "./pages/sidebar";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
-
-import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
-import MuiDrawer from "@mui/material/Drawer";
 import MuiAppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
-import CssBaseline from "@mui/material/CssBaseline";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import { utils } from "near-api-js";
-import { checkWallet, createNotify, truncate } from "./utils/service";
-import {
-  AptosClient,
-  AptosAccount,
-  CoinClient,
-  TokenClient,
-  FaucetClient,
-  HexString,
-  TxnBuilderTypes,
-} from "aptos";
-
-import { CLIENT_ID, DOMAIN } from "./config/config";
-import { NODE_URL, FAUCET_URL, aptosCoinStore } from "./config/section";
-import { toast } from "react-toastify";
+import { styled } from "@mui/material/styles";
 import { Backdrop, Fade, Grid, Menu, MenuItem, Modal } from "@mui/material";
-import logoIcon from "./assets/img/logo.svg";
-import footerLogo from "./assets/img/footerlogo.svg";
-import metamask from "./assets/wallet/metamask.png";
-import solana from "./assets/wallet/solana.png";
-import aptosIcon from "./assets/wallet/aptos.png";
+
+import { toast } from "react-toastify";
+//// metamask
 import { useWeb3React } from "@web3-react/core";
 import { injected } from "./config/connector";
-import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 
 // -----solana--
-import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import { useWallet } from "@solana/wallet-adapter-react";
 import {
   WalletModalProvider,
-  WalletDisconnectButton,
   WalletMultiButton,
 } from "@solana/wallet-adapter-react-ui";
 // -----
+
+import { createNotify, truncate } from "./utils/service";
+import { CLIENT_ID, DOMAIN } from "./config/config";
+
+import logoIcon from "./assets/img/logo.svg";
+import aptosIcon from "./assets/wallet/aptos.png";
+import metamask from "./assets/wallet/metamask.png";
+import footerLogo from "./assets/img/footerlogo.svg";
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -87,7 +69,6 @@ export default function MainLayout({ getWallet }) {
   const disData = JSON.parse(localStorage.getItem("discordUser"));
   const navigate = useNavigate();
   const [aptosAccount, setAccount] = useState(undefined);
-  const [balance, setBalance] = useState(0);
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -96,8 +77,7 @@ export default function MainLayout({ getWallet }) {
   const [anchorElUser2, setAnchorElUser2] = useState(null);
   const [anchorElUser3, setAnchorElUser3] = useState(null);
   const [anchorElUser4, setAnchorElUser4] = useState(null);
-  const { active, account, library, connector, activate, deactivate } =
-    useWeb3React();
+  const { active, account, activate, deactivate } = useWeb3React();
 
   const solwallet = useWallet();
 
@@ -242,15 +222,15 @@ export default function MainLayout({ getWallet }) {
   };
 
   const handleDiscordLogout = async () => {
-    await localStorage.removeItem("discordUser");
+    localStorage.removeItem("discordUser");
     window.location.reload();
   };
 
   const activeWallet = async () => {
     var wallettype = localStorage.getItem("walletflag");
     if (wallettype === null) {
-      setWalletFlag('m');
-      getWallet('m');
+      setWalletFlag("m");
+      getWallet("m");
     } else {
       setWalletFlag(wallettype);
       getWallet(wallettype);
@@ -368,7 +348,7 @@ export default function MainLayout({ getWallet }) {
             <Button
               sx={{ fontSize: "20px", color: "black", fontWeight: "bold" }}
               onClick={() => {
-                navigate('/coinflip')
+                navigate("/coinflip");
               }}
             >
               CoinFlip
@@ -576,7 +556,7 @@ export default function MainLayout({ getWallet }) {
               className="usermenu"
             >
               {(walletFlag === "m" && active) ||
-                (walletFlag === "s" && solwallet.connected) ? (
+              (walletFlag === "s" && solwallet.connected) ? (
                 <MenuItem>
                   <Typography textAlign="center" sx={{ px: "20px" }}>
                     Profile
@@ -830,7 +810,7 @@ export default function MainLayout({ getWallet }) {
                   width: "100%",
                 }}
               >
-                <div style={{flex:'1'}}></div>
+                <div style={{ flex: "1" }}></div>
                 <div>
                   <h2>Cynic Society</h2>
                   <h4>Home</h4>

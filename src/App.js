@@ -1,6 +1,5 @@
 import React, { lazy, useCallback, useEffect, useState } from "react";
 import { BrowserRouter as Router } from "react-router-dom";
-import { initialCrossword, WalletContext } from "./contexts/accounts";
 import { Routes, Route } from "react-router-dom";
 import Loadable from "./utils/loadable";
 import { Web3ReactProvider } from "@web3-react/core";
@@ -13,11 +12,7 @@ import "./App.css";
 import SolWalletProvider from "./config/wallet";
 
 const Layout = Loadable(lazy(() => import("./layout")));
-const DiscordLogin = Loadable(lazy(() => import("./pages/login")));
 const Raffle = Loadable(lazy(() => import("./pages/raffle")));
-const Raffle2 = Loadable(lazy(() => import("./pages/raffle2")));
-const Account = Loadable(lazy(() => import("./pages/account")));
-const CreateNewRaffle = Loadable(lazy(() => import("./pages/create")));
 const Callback = Loadable(lazy(() => import("./pages/callback")));
 const CoinFlip = Loadable(lazy(() => import("./pages/coinflip")));
 
@@ -27,7 +22,6 @@ globalThis.Buffer = Buffer;
 export default function App() {
   const [wallet, setWallet] = useState(undefined);
   const [walletFlag, setwalletFlag] = useState("a");
-  const [wAddress, setWAddress] = useState();
 
   const init = useCallback(async () => {
     const getProvider = () => {
@@ -48,27 +42,25 @@ export default function App() {
 
   return (
     <SolWalletProvider>
-      <WalletContext.Provider value={wallet}>
-        <Web3ReactProvider getLibrary={getLibrary}>
-          <Router>
-            <Routes>
-              <Route element={<Layout getWallet={setwalletFlag} />}>
-                <Route path="/auth/callback" element={<Callback />} />
-                <Route path="/" element={<Raffle walletFlag={walletFlag} />} />
-                <Route
-                  path="/raffles"
-                  element={<Raffle walletFlag={walletFlag} />}
-                />
-                <Route
-                  path="/coinflip"
-                  element={<CoinFlip walletFlag={walletFlag} />}
-                />
-              </Route>
-            </Routes>
-          </Router>
-        </Web3ReactProvider>
-        <ToastContainer />
-      </WalletContext.Provider>
+      <Web3ReactProvider getLibrary={getLibrary}>
+        <Router>
+          <Routes>
+            <Route element={<Layout getWallet={setwalletFlag} />}>
+              <Route path="/auth/callback" element={<Callback />} />
+              <Route path="/" element={<Raffle walletFlag={walletFlag} />} />
+              <Route
+                path="/raffles"
+                element={<Raffle walletFlag={walletFlag} />}
+              />
+              <Route
+                path="/coinflip"
+                element={<CoinFlip walletFlag={walletFlag} />}
+              />
+            </Route>
+          </Routes>
+        </Router>
+      </Web3ReactProvider>
+      <ToastContainer />
     </SolWalletProvider>
   );
 }
