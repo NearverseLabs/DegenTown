@@ -1,0 +1,13 @@
+.ticket-left-text {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 27px;
+}
+.ticket-right-text {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 21px;
+  padding-top: 5px;
+}

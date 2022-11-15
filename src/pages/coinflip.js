@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+
 import { InputBase } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
@@ -12,23 +13,21 @@ import TableContainer from "@mui/material/TableContainer";
 import TablePagination from "@mui/material/TablePagination";
 import HistoryIcon from "@mui/icons-material/History";
 import { LoadingButton } from "@mui/lab";
+
 import { toast } from "react-toastify";
 import floor from "floor";
 import axios from "axios";
+
 import yrect from "../assets/img/yrect.svg";
 import coinflag from "../assets/img/coinflag.svg";
 import bgTable from "../assets/img/bgTable.svg";
 import tossCoin from "../assets/img/tossCoin.svg";
 import option from "../assets/img/option.svg";
+
 import { createNotify, savecoinflipResult } from "../utils/service";
 import { SERVER_URL } from "../config/config";
-import { Buffer } from "buffer";
-import { AptosClient, AptosAccount, CoinClient, FaucetClient } from "aptos";
-import { NODE_URL, FAUCET_URL } from "../config/section";
 
-const client = new AptosClient(NODE_URL);
-const coinClient = new CoinClient(client);
-
+const APTOS_RPC = "https://fullnode.mainnet.aptoslabs.com/v1";
 const columns = [
   { id: "sender", label: "Address", minWidth: 170 },
   { id: "tossflag", label: "Coin", minWidth: 100 },
@@ -46,6 +45,7 @@ const columns = [
     label: "Result",
   },
 ];
+
 const leaderboard_columns = [
   { id: "username", label: "UserName", minWidth: 170 },
   { id: "profit", label: "Net Gains", minWidth: 100 },
@@ -58,6 +58,7 @@ const leaderboard_columns = [
     label: "Last Flip",
   },
 ];
+
 var effectFlag = false;
 
 export default function CoinFlip() {
@@ -102,108 +103,82 @@ export default function CoinFlip() {
               if (betAmount >= 0.1) {
                 setBetAmount(floor(betAmount, -3));
                 var wallet = await window.martian.connect();
+
                 var transactions = await window.martian.getAccountResources(
                   wallet.address
                 );
+
                 let account = transactions.find(
                   ({ type }) =>
                     type === "0x1::coin::CoinStore<0x1::aptos_coin::AptosCoin>"
                 );
                 var curPrice = account.data.coin.value;
+
                 if (curPrice >= betAmount * 10 ** 8) {
-                  const payload = {
-                    function: "0x1::coin::transfer",
-                    type_arguments: ["0x1::aptos_coin::AptosCoin"],
+                  var tossflag = 0;
+                  let payload = {
+                    type: "script_function_payload",
+                    function:
+                      "0xafaec995f57c2ce9f4c28e72173163970614ee0e1a308fd1f3e4453673788e98::flipcoin::play",
+                    type_arguments: [],
                     arguments: [
-                      "0xafaec995f57c2ce9f4c28e72173163970614ee0e1a308fd1f3e4453673788e98",
+                      Math.floor(Math.random() * 10),
+                      tossflag,
                       Math.floor(betAmount * 10 ** 8),
                     ],
                   };
 
-                  console.log(
-                    Math.floor(betAmount * 10 ** 8),
-                    "Math.floor(betAmount * 10 ** 8)"
-                  );
-
-                  const transaction = await window.martian.generateTransaction(
+                  const txnRequest = await window.martian.generateTransaction(
                     wallet.address,
                     payload
                   );
-
-                  const txnHash = await window.martian.signAndSubmitTransaction(
-                    transaction
+                  const txhash = await window.martian.signAndSubmitTransaction(
+                    txnRequest
                   );
 
-                  var gameResult = Math.floor(Math.random() * 10) < 4;
-                  if (gameResult) {
-                    var privateKey = Uint8Array.from(
-                      Buffer.from(process.env.REACT_APP_Private_Key, "hex")
-                    );
-                    let Admin_account = new AptosAccount(
-                      privateKey,
-                      "0xafaec995f57c2ce9f4c28e72173163970614ee0e1a308fd1f3e4453673788e98"
-                    );
-                    let userAccount = new AptosAccount(
-                      undefined,
-                      wallet.address
-                    );
-                    let Hash = await coinClient.transfer(
-                      Admin_account,
-                      userAccount,
-                      Math.floor(betAmount * 10 ** 8 * 1.97),
-                      {
-                        gasUnitPrice: BigInt(100),
+                  let data = {
+                    sender: wallet.address,
+                    tossflag: tossFlag,
+                    amount: betAmount,
+                    hash: txhash,
+                    username: `${disData.username}${disData.discriminator}`,
+                    userid: disData.id,
+                  };
+
+                  setTimeout(async () => {
+                    const transaction_api_rul = `${APTOS_RPC}/transactions/by_hash/${txhash}`;
+                    const res = await fetch(transaction_api_rul);
+                    const txJson = await res.json();
+                    if (txJson && txJson.events) {
+                      let events = txJson.events;
+                      if (events.length > 1) {
+                        data.result = "true";
+                      } else {
+                        data.result = "false";
                       }
-                    );
-                    await client.waitForTransaction(Hash, {
-                      checkSuccess: true,
-                    });
-                    let data = {
-                      sender: wallet.address,
-                      tossflag: tossFlag,
-                      amount: betAmount,
-                      hash: txnHash,
-                      result: true,
-                      username: `${disData.username}${disData.discriminator}`,
-                      userid: disData.id,
-                    };
-
-                    const result = await savecoinflipResult({ data: data });
-                    if (result.data === "txn") {
-                      createNotify("error", "Transaction Error");
-                      setLoading(false);
-                    } else {
-                      settosscoinresult("true");
-                      setBalance();
-                      setLoading(false);
-                      setTimeout(() => {
-                        settosscoinresult("");
-                      }, 5000);
+                      const result = await savecoinflipResult({ data: data });
+                      if (result.data === "already exist") {
+                        createNotify("error", "Transaction duplicated");
+                        setLoading(false);
+                      } else {
+                        if (result.data.data.result === "true") {
+                          settosscoinresult(data.result);
+                          setBalance();
+                          setTimeout(() => {
+                            settosscoinresult("");
+                          }, 5000);
+                          setLoading(false);
+                        } else {
+                          settosscoinresult(data.result);
+                          setLoading(false);
+                          setBalance();
+                          setTimeout(() => {
+                            settosscoinresult("");
+                          }, 5000);
+                        }
+                      }
                     }
-                  } else {
-                    let data = {
-                      sender: wallet.address,
-                      tossflag: tossFlag,
-                      amount: betAmount,
-                      hash: txnHash,
-                      result: false,
-                      username: `${disData.username}${disData.discriminator}`,
-                      userid: disData.id,
-                    };
-
-                    const result = await savecoinflipResult({ data: data });
-                    if (result.data === "txn") {
-                      createNotify("error", "Transaction Error");
-                      setLoading(false);
-                    } else {
-                      settosscoinresult("false");
-                      setBalance();
-                      setLoading(false);
-                      setTimeout(() => {
-                        settosscoinresult("");
-                      }, 5000);
-                    }
-                  }
+                  }, 2000);
                 } else {
                   toast.error("Not enough coin");
                   setLoading(false);
@@ -423,7 +398,7 @@ export default function CoinFlip() {
             <div style={{ display: "flex" }}>
               <div style={{ flex: "1" }}></div>
               <div>
-                <Box
+                <Button
                   variant="text"
                   className="activeBtn"
                   sx={{
@@ -432,7 +407,7 @@ export default function CoinFlip() {
                   }}
                 >
                   Balance :<span style={{ color: "yellow" }}>{Balance}apt</span>
-                </Box>
+                </Button>
               </div>
             </div>
             <h2 style={{ color: "white", textAlign: "center", margin: "0px" }}>
@@ -448,8 +423,7 @@ export default function CoinFlip() {
               }}
             >
               <InputBase
-                sx={{ ml: 1, flex: 1 }}
-                className="betAmount"
+                sx={{ ml: 1, flex: 1, color: "black" }}
                 placeholder="Please Input the Bet Amount"
                 inputProps={{ "aria-label": "search google maps" }}
                 type="number"
@@ -463,7 +437,9 @@ export default function CoinFlip() {
                   }
                 }}
               />
-              <Box className="activeBtn">Aptos</Box>
+              <Button variant="text" className="activeBtn">
+                Aptos
+              </Button>
             </Box>
             <Box sx={{ display: "flex" }}>
               <LoadingButton

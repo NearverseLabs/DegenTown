@@ -1,5 +1,8 @@
-body{
+@import url("https://use.typekit.net/iri2ecy.css");
+
+body {
   background: white !important;
+  font-family: poppins, sans-serif;
 }
 
 .App {
@@ -11,12 +14,12 @@ body{
   pointer-events: none;
 }
 
-.default{
+.default {
   width: 200px;
 }
 
-.btn_leaderboard{
-  background: url('../src/assets/img/1day.svg');
+.btn_leaderboard {
+  background: url("../src/assets/img/1day.svg");
   background-size: 100% 100% !important;
   color: black !important;
   font-size: 16px !important;
@@ -24,27 +27,27 @@ body{
   padding: 10px 40px !important;
 }
 
-.full{
-  width:100%;
+.full {
+  width: 100%;
 }
 
-.Livebtn{
+.Livebtn {
   background-color: black !important;
   color: white !important;
   border-radius: 20px !important;
 }
 
-.closedbtn{
+.closedbtn {
   background-color: transparent !important;
   color: black !important;
   border-radius: 20px !important;
 }
 
-.datetimepicker div div div button{
+.datetimepicker div div div button {
   color: black !important;
 }
 
-.drag-active{
+.drag-active {
   background-color: #7fb2ff;
   color: white;
 }
@@ -61,23 +64,23 @@ body{
   left: 0px;
 }
 
-.activeBtn{
+.activeBtn {
   color: white !important;
-  background: url('./assets/img/bbtn.svg');
+  background: url("./assets/img/bbtn.svg");
   background-size: 100% 100%;
   padding: 10px 40px !important;
-  font-size:16px !important;
+  font-size: 16px !important;
 }
 
-.btn{
-  background: #8770B8 !important;
-  color:white !important;
+.btn {
+  background: #8770b8 !important;
+  color: white !important;
   font-size: 16px !important;
   border: 0px !important;
 }
 
 .btnBlack {
-  background: #1B1F24 !important;
+  background: #1b1f24 !important;
   color: white !important;
   font-size: 16px !important;
 }
@@ -112,54 +115,53 @@ body{
   }
 }
 
-
 .App {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   text-align: center;
 }
 
-.coinflip{
+.coinflip {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-.coinflip-main{
+.coinflip-main {
   display: flex;
   flex-direction: column;
 }
 
-.coinflip-main-head{
+.coinflip-main-head {
   background: #283345;
   border-radius: 12px 12px 0px 0px;
   display: flex;
   padding: 10px 20px;
 }
 
-.coinflip-main-coin{
+.coinflip-main-coin {
   display: flex;
   align-items: center;
   gap: 5px;
 }
 
-.coinflip-main-coin img{
+.coinflip-main-coin img {
   width: 20px;
 }
 
-.coinflip-main-coin span{
+.coinflip-main-coin span {
   font-size: x-large;
 }
 
-.coinflip-main-btngroup{
+.coinflip-main-btngroup {
   display: flex;
   gap: 10px;
 }
 
-.coinflip-main-content{
+.coinflip-main-content {
   display: flex;
 }
 
-.coinflip-main-setting{
+.coinflip-main-setting {
   flex: 4;
   padding: 20px;
   background-color: #1b2838;
@@ -169,7 +171,7 @@ body{
   border-right: 1px solid #90caf9;
 }
 
-.coinflip-main-mode{
+.coinflip-main-mode {
   flex: 8;
   padding: 20px;
   background-color: #1b2838;
@@ -179,35 +181,35 @@ body{
   gap: 50px;
 }
 
-.coinAvatar{
+.coinAvatar {
   display: flex;
   flex-direction: column;
   align-items: center;
   cursor: pointer;
 }
 
-.coinAvatar img{
+.coinAvatar img {
   width: 100px;
 }
 
-.coinAvatarR{
+.coinAvatarR {
   display: flex;
-    flex-direction: column;
-    align-items: center;
-    cursor: pointer;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
 }
 
 .coinAvatarR img {
   width: 200px;
 }
 
-.coinflip-history{
+.coinflip-history {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-.push{
+.push {
   flex: 1;
 }
 

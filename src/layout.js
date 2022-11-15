@@ -32,6 +32,8 @@ import aptosIcon from "./assets/wallet/aptos.png";
 import metamask from "./assets/wallet/metamask.png";
 import footerLogo from "./assets/img/footerlogo.svg";
 
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
