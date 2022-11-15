@@ -18,6 +18,10 @@ export const checkAdmin = () => {
   return admin ? true : false;
 };
 
+export const getAll_topazNFT = async (owner) => {
+  return await axios.post(`${SERVER_URL}/getAll_topazNFT`, owner);
+};
+
 export const createUser = async (data) => {
   return await axios.post(`${SERVER_URL}/create-user`, data);
 };
@@ -51,8 +55,8 @@ export const checkNFT = async (nId) => {
 };
 
 export const savecoinflipResult = async (hash) => {
-  return await axios.post(`${SERVER_URL}/saveHash`, hash)
-}
+  return await axios.post(`${SERVER_URL}/saveHash`, hash);
+};
 
 export const createNotify = async (type, message) => {
   let toastData = {

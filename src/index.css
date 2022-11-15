@@ -22,6 +22,10 @@ code {
     monospace;
 }
 
+.betAmount input{
+  color: black !important;
+}
+
 .searchbtn{
   background-color: rgba(241, 241, 241, 1) !important;
   color: black !important;

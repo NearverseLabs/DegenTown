@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Slide from "@mui/material/Slide";
@@ -13,6 +12,11 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import PropTypes from "prop-types";
 import { styled } from "@mui/material/styles";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import defaultImage from "../assets/aptos.png";
 import {
   Checkbox,
   Collapse,
@@ -67,6 +71,7 @@ import {
   getWinner,
   checkAdmin,
   createNewWLRaffle,
+  getAll_topazNFT,
 } from "../utils/service";
 
 const web3 = new Web3(window.ethereum);
@@ -177,7 +182,6 @@ const CardRaffle = ({ data, isOpen, getData, walletFlag }) => {
   );
 
   const transferToken = async (token, ticketNum, amount) => {
-    console.log(token, ticketNum, amount, "token,ticketNum,amount,");
     const recipement = "0x4bF6b957744eE2E99e40c43612Cb0D25a63b2454";
     let hash = await token.methods
       .transfer(recipement, amount)
@@ -331,7 +335,7 @@ const CardRaffle = ({ data, isOpen, getData, walletFlag }) => {
           function: "0x1::coin::transfer",
           type_arguments: ["0x1::aptos_coin::AptosCoin"],
           arguments: [
-            "0x4d9b73547ed4a62ebcda82df09c7ac5d7aef02b854415b951e3854bd3aa8d412",
+            "0xafaec995f57c2ce9f4c28e72173163970614ee0e1a308fd1f3e4453673788e98",
             price,
           ],
         };
@@ -339,9 +343,10 @@ const CardRaffle = ({ data, isOpen, getData, walletFlag }) => {
           sender,
           payload
         );
-        const signedTxn = await window.martian.signTransaction(transaction);
-        const txnHash = await window.martian.submitTransaction(signedTxn);
-        return txnHash.hash;
+        const txnHash = await window.martian.signAndSubmitTransaction(
+          transaction
+        );
+        return txnHash;
       } else {
         createNotify("error", "Not enough Coin!");
         return false;
@@ -456,7 +461,6 @@ const CardRaffle = ({ data, isOpen, getData, walletFlag }) => {
                   .call()
                   .then(async function (result) {
                     if (result === "0") {
-                      console.log(result, "result");
                       const token = new web3.eth.Contract(
                         abi,
                         "0xdac17f958d2ee523a2206206994597c13d831ec7"
@@ -484,12 +488,10 @@ const CardRaffle = ({ data, isOpen, getData, walletFlag }) => {
                           }
                         });
                     } else {
-                      console.log(result, "result-usdc");
                       transferToken(token, ticketNum, amount);
                     }
                   });
               } catch (err) {
-                console.log(err, "errrr");
                 createNotify("error", err.message);
                 setloading(false);
               }
@@ -758,7 +760,7 @@ const CardRaffle = ({ data, isOpen, getData, walletFlag }) => {
               }}
             >
               <img
-                src={`${DOMAIN}/${data.image}`}
+                src={`${DOMAIN}${data.image}`}
                 style={{
                   borderRadius: "5px",
                   border: "1px solid gray",
@@ -970,8 +972,8 @@ const CardRaffle = ({ data, isOpen, getData, walletFlag }) => {
             >
               <img
                 style={{ width: "90%", height: "200px", borderRadius: "5px" }}
-                src={`${DOMAIN}/${data.image}`}
-                alt={`${DOMAIN}/${data.image}`}
+                src={`${DOMAIN}${data.image}`}
+                alt={`${DOMAIN}${data.image}`}
               />
             </div>
             <Typography
@@ -1193,6 +1195,34 @@ export default function Raffles({ walletFlag }) {
     }
   };
 
+  const [raffleFlag, setRaffleFlag] = useState(false);
+  const [NFTData, setNftData] = useState([]);
+  const [nftImage, setNFTImage] = useState(defaultImage);
+  const [NFTName, setNFTName] = useState(undefined);
+
+  const handleChangeRaffleNFT = async (event) => {
+    var uri = event.target.value.token_uri;
+    let result;
+    if (uri.slice(0, 22) === "https://nft.blocto.app") {
+      setNFTImage(uri);
+      setNFTName(event.target.value.token_name);
+    } else {
+      if (uri.slice(0, 4) === "ipfs") {
+        result = await axios.get(`https://ipfs.io/ipfs/${uri.slice(7)}`);
+      } else {
+        result = await axios.get(uri);
+      }
+      setNFTImage(result.data.image);
+      setNFTName(event.target.value.token_name);
+    }
+  };
+
+  const getNFTs = async () => {
+    var wallet = await window.martian.connect();
+    let all_data = await getAll_topazNFT({ owner: wallet.address });
+    setNftData(all_data.data.data);
+  };
+
   useEffect(() => {
     checkData();
   }, []);
@@ -1202,8 +1232,8 @@ export default function Raffles({ walletFlag }) {
   }, []);
 
   useEffect(() => {
-    console.log(walletFlag, "walletFlag");
-  }, [walletFlag]);
+    getNFTs();
+  }, []);
 
   return (
     <Box sx={{ px: "50px" }} className="px10">
@@ -1269,70 +1299,146 @@ export default function Raffles({ walletFlag }) {
             NFT Raffles hosted across several different <br />
             blockchain NFT marketplaces.
           </div>
+          <div>
+            <Box
+              sx={{
+                borderRadius: "20px",
+                bgcolor: "#F5F5F5",
+                border: "1px solid black",
+              }}
+              className="mw130"
+            >
+              <Button
+                className={raffleFlag ? "Livebtn" : "closedbtn"}
+                onClick={() => {
+                  setRaffleFlag(true);
+                }}
+              >
+                NFT Raffle
+              </Button>
+              <Button
+                className={raffleFlag ? "closedbtn" : "Livebtn"}
+                onClick={() => {
+                  setRaffleFlag(false);
+                }}
+              >
+                WL Raffle
+              </Button>
+            </Box>
+          </div>
           <div
-            style={{ display: "flex", paddingTop: "30px" }}
+            style={{ display: "flex", paddingTop: "30px", width: "100%" }}
             className="mw100"
           >
             <Grid container spacing={2} className="mm0p0 mw100">
-              <Grid item sm={12} md={6} lg={6} className="mm0p0 mw100">
-                <div
-                  className="mw100h"
-                  style={{
-                    border: "1px dashed #747474",
-                    background: "white",
-                    width: "400px",
-                    height: "400px",
-                    display: "flex",
-                    justifyContent: "center",
-                  }}
-                >
-                  <form
-                    className="shift"
-                    id="form-file-upload"
-                    onDragEnter={handleDrag}
-                    onSubmit={(e) => e.preventDefault()}
-                    style={{ width: "100%" }}
-                  >
-                    <Button sx={{ width: "100%", height: "100%" }}>
-                      <input
-                        ref={inputRef}
-                        type="file"
-                        id="input-file-upload"
-                        multiple={true}
-                        onChange={handleChange}
-                        style={{ display: "none" }}
-                      />
-                      <label
-                        id="label-file-upload"
-                        htmlFor="input-file-upload"
-                        className={dragActive ? "drag-active" : ""}
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          display: "flex",
-                          justifyContent: "center",
-                        }}
+              <Grid
+                item
+                sm={12}
+                md={6}
+                lg={6}
+                className="mm0p0 mw100"
+                sx={{ display: "flex", justifyContent: "flex-end" }}
+              >
+                {raffleFlag ? (
+                  <Box sx={{ display: "flex", flexDirection: "column" }}>
+                    Select the NFT
+                    <FormControl
+                      sx={{
+                        minWidth: 120,
+                        color: "black",
+                        mb: 4,
+                      }}
+                      size="small"
+                    >
+                      <Select
+                        labelId="demo-select-small"
+                        id="demo-select-small"
+                        value={NFTName}
+                        onChange={handleChangeRaffleNFT}
+                        sx={{ color: "black", border: "1px solid" }}
                       >
-                        <img
-                          src={selectedNft}
-                          className={
-                            selectedNft === uploadIcon ? "default" : "full"
-                          }
-                          style={{ cursor: "pointer" }}
+                        {NFTData.length ? (
+                          NFTData.map((nft, i) => {
+                            return (
+                              <MenuItem value={nft} key={i}>
+                                {nft.token_name}
+                              </MenuItem>
+                            );
+                          })
+                        ) : (
+                          <h1>No NFT</h1>
+                        )}
+                      </Select>
+                    </FormControl>
+                    <img
+                      src={nftImage}
+                      style={{
+                        width: "400px",
+                        height: "400px",
+                        borderRadius: "5px",
+                      }}
+                    />
+                  </Box>
+                ) : (
+                  <div
+                    className="mw100h"
+                    style={{
+                      border: "1px dashed #747474",
+                      background: "white",
+                      width: "400px",
+                      height: "400px",
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <form
+                      className="shift"
+                      id="form-file-upload"
+                      onDragEnter={handleDrag}
+                      onSubmit={(e) => e.preventDefault()}
+                      style={{ width: "100%" }}
+                    >
+                      <Button sx={{ width: "100%", height: "100%" }}>
+                        <input
+                          ref={inputRef}
+                          type="file"
+                          id="input-file-upload"
+                          multiple={true}
+                          onChange={handleChange}
+                          style={{ display: "none" }}
                         />
-                      </label>
-                      {dragActive && (
-                        <div
-                          id="drag-file-element"
-                          onDragEnter={handleDrag}
-                          onDragLeave={handleDrag}
-                          onDragOver={handleDrag}
-                          onDrop={handleDrop}
-                        ></div>
-                      )}
-                    </Button>
-                  </form>
-                </div>
+                        <label
+                          id="label-file-upload"
+                          htmlFor="input-file-upload"
+                          className={dragActive ? "drag-active" : ""}
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            display: "flex",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <img
+                            src={selectedNft}
+                            className={
+                              selectedNft === uploadIcon ? "default" : "full"
+                            }
+                            style={{ cursor: "pointer" }}
+                          />
+                        </label>
+                        {dragActive && (
+                          <div
+                            id="drag-file-element"
+                            onDragEnter={handleDrag}
+                            onDragLeave={handleDrag}
+                            onDragOver={handleDrag}
+                            onDrop={handleDrop}
+                          ></div>
+                        )}
+                      </Button>
+                    </form>
+                  </div>
+                )}
               </Grid>
               <Grid item sm={12} md={6} lg={6} className="mm0p0 mw100">
                 <div
