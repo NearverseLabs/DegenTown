@@ -92,6 +92,8 @@ export default function MainLayout({ getWallet }) {
   const [anchorElUser4, setAnchorElUser4] = useState(null);
   const { active, account, activate, deactivate } = useWeb3React();
 
+  const url = location.pathname;
+
   const solwallet = useWallet();
 
   const ConnectWallet = async () => {
@@ -223,6 +225,20 @@ export default function MainLayout({ getWallet }) {
     setAnchorElUser4(null);
   };
 
+  const pages = [
+    {
+      title: "Home",
+      link: "/",
+    },
+    {
+      title: "Raffles",
+      link: "/raffles",
+    },
+    {
+      title: "CoinFlip",
+      link: "/coinflip",
+    },
+  ];
   const handleDiscordLogin = async () => {
     const OAuthScope = ["identify"].join(" ");
     const OAuthData = new URLSearchParams({
@@ -345,27 +361,22 @@ export default function MainLayout({ getWallet }) {
             }}
             className="dn"
           >
-            <Button
-              sx={{ fontSize: "20px", color: "black", fontWeight: "bold" }}
-            >
-              Home
-            </Button>
-            <Button
-              sx={{ fontSize: "20px", color: "black", fontWeight: "bold" }}
-              onClick={() => {
-                navigate("/raffles");
-              }}
-            >
-              Raffles
-            </Button>
-            <Button
-              sx={{ fontSize: "20px", color: "black", fontWeight: "bold" }}
-              onClick={() => {
-                navigate("/coinflip");
-              }}
-            >
-              CoinFlip
-            </Button>
+            {pages.map((page) => {
+              return (
+                <Button
+                  sx={{
+                    fontSize: "20px",
+                    color: url === page.link ? "#8770B8" : "black",
+                    fontWeight: "bold",
+                  }}
+                  onClick={() => {
+                    navigate(page.link);
+                  }}
+                >
+                  {page.title}
+                </Button>
+              );
+            })}
           </Box>
           <Box
             sx={{

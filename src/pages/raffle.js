@@ -1678,7 +1678,7 @@ export default function Raffles({ walletFlag }) {
           container
           spacing={2}
           sx={{
-            maxWidth: "80em",
+            maxWidth: "88em",
             margin: "0 auto",
           }}
         >
