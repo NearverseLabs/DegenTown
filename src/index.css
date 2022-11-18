@@ -1,28 +1,49 @@
 body {
   margin: 0;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
-
-p,h1,h2,h3,h4,h5,h6,button,span,div,ol,li,tr,td,th,input,label{
-  font-family: 'Poppins', sans-serif;
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
 }
 
-::-webkit-scrollbar{
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap");
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+button,
+span,
+div,
+ol,
+li,
+tr,
+td,
+th,
+input,
+label {
+  font-family: "Poppins", sans-serif;
+}
+
+::-webkit-scrollbar {
   width: 5px;
-    height: 8px;
-    background-color: #aaa;
+  height: 8px;
+  background-color: #aaa;
 }
 
 code {
-  font-family: 'Poppins', sans-serif,
-    monospace;
+  font-family: "Poppins", sans-serif, monospace;
 }
 
-.searchbtn{
+.searchbtn {
   background-color: rgba(241, 241, 241, 1) !important;
   color: black !important;
   border: 1px solid black !important;
@@ -30,7 +51,7 @@ code {
 }
 
 .usermenu ul {
-  background: #8770B8;
+  background: #8770b8;
 }
 
 .clm-to-row {
@@ -39,26 +60,25 @@ code {
   justify-content: space-between;
 }
 
-.pdn{
+.pdn {
   display: none !important;
 }
 
-.pdn2{
+.pdn2 {
   display: none;
 }
 
 @media (max-width: 425px) {
-
-  .mw7{
-    width:70% !important
+  .mw7 {
+    width: 70% !important;
   }
 
-  .mw8h4{
+  .mw8h4 {
     width: 80% !important;
     height: 40% !important;
   }
 
-  .mwavatar1{
+  .mwavatar1 {
     width: 50px !important;
   }
 
@@ -66,66 +86,62 @@ code {
     width: 90px !important;
   }
 
-  .mpl0{
+  .mpl0 {
     padding-left: 0px !important;
   }
 
-  .mpl20{
+  .mpl20 {
     padding-left: 20px !important;
   }
 
-  .mw80{
-    width: 80% !important;
-    padding: 0px !important;
+  .mw80 {
+    width: 80vw !important;
+    padding: 2em 3em !important;
   }
 
-  .pdn2{
+  .pdn2 {
     display: flex;
   }
 
-  .mmt80{
+  .mmt80 {
     margin-top: 80px !important;
   }
 
-  .mw100{
+  .mw100 {
     width: 100% !important;
   }
 
-  .pdn{
+  .pdn {
     display: block !important;
   }
 
-  .dgg20{
+  .dgg20 {
     display: grid !important;
     gap: 20px;
   }
 
-  .mw130{
-    width: 130px;
-  }
-
-  .px10{
+  .px10 {
     padding: 0px 10px !important;
   }
 
-  .dn{
+  .dn {
     display: none !important;
   }
 
-  .m0p10{
+  .m0p10 {
     margin: 0px 10px !important;
   }
 
-  .mt30{
+  .mt30 {
     margin-top: 30px;
   }
 
-  .mw100h{
+  .mw100h {
     width: 100% !important;
     height: 250px !important;
   }
 
-  .mm0p0{
+  .mm0p0 {
     margin: 0px !important;
     padding: 0px !important;
   }
@@ -147,5 +163,4 @@ code {
     flex-direction: column !important;
     align-items: flex-start;
   }
-
 }

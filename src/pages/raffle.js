@@ -647,7 +647,14 @@ const CardRaffle = ({ data, isOpen, getData, walletFlag }) => {
   }, []);
 
   return (
-    <Grid item sm={12} md={4} lg={3} sx={{ height: "fit-content" }} pr="35px">
+    <Grid
+      item
+      sm={12}
+      md={4}
+      lg={3}
+      sx={{ height: "fit-content", margin: "auto" }}
+      pr="35px"
+    >
       <Box
         sx={{
           border: "1px solid gray",
@@ -1623,8 +1630,8 @@ export default function Raffles({ walletFlag }) {
             borderRadius: "20px",
             bgcolor: "#F5F5F5",
             border: "1px solid black",
+            width: "fit-content",
           }}
-          className="mw130"
         >
           <Button
             className={isLive ? "Livebtn" : "closedbtn"}

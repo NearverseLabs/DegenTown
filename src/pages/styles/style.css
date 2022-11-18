@@ -11,3 +11,22 @@
   line-height: 21px;
   padding-top: 5px;
 }
+/* 450 and less screens */
+@media screen and (max-width: 450px) {
+  .ticket-left-text {
+    font-size: 14px;
+    line-height: 24px;
+  }
+  .ticket-right-text {
+    font-size: 12px;
+    line-height: 18px;
+  }
+}
+button.network-button {
+  color: #fff;
+  transition: color 0.2s;
+}
+button.network-button:hover {
+  color: #000;
+  transition: color 0.2s;
+}

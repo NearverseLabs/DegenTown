@@ -44,6 +44,7 @@ import metamask from "./assets/wallet/metamask.png";
 import footerLogo from "./assets/img/footerlogo.svg";
 
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import CloseIcon from "@mui/icons-material/Close";
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -66,13 +67,16 @@ const style = {
   position: "absolute",
   top: "50%",
   left: "50%",
-  background: "#121212 !important",
+  background: "#EBE3FF ",
   transform: "translate(-50%, -50%)",
-  width: "20vw !important",
-  borderRadius: "5px",
-  padding: "20px 30px",
+  width: "20vw",
+  minWidth: "300px",
+  borderRadius: ".75em",
+  padding: "3em 2em",
   boxShadow: 24,
-  display: "grid",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",
 };
 
 const settings = ["Home", "Raffles", "CoinFlip"];
@@ -239,6 +243,13 @@ export default function MainLayout({ getWallet }) {
       link: "/coinflip",
     },
   ];
+
+  const networks = [
+    { name: "Ethereum", select: selectMetamask, flag: "m" },
+    { name: "Solana", select: selectSolana, flag: "s" },
+    { name: "Aptos", select: selectAptos, flag: "a" },
+  ];
+
   const handleDiscordLogin = async () => {
     const OAuthScope = ["identify"].join(" ");
     const OAuthData = new URLSearchParams({
@@ -293,49 +304,48 @@ export default function MainLayout({ getWallet }) {
         }}
       >
         <Fade in={open}>
-          <Box sx={style} className="mw80">
-            <span style={{ marginBottom: "20px", color: "white" }}>
+          <div style={style} className="mw80">
+            <IconButton
+              onClick={handleClose}
+              sx={{
+                position: "absolute",
+                top: ".5em",
+                right: ".5em",
+                color: "black",
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
+            <span
+              style={{
+                margin: "0 auto 20px auto",
+                marginBottom: "20px",
+                color: "black",
+              }}
+            >
               Select Network
             </span>
-            <Button
-              sx={{
-                display: "flex",
-                bgcolor: "black",
-                justifyContent: "center",
-                border: "1px solid gray",
-                background: "transparent",
-                marginBottom: "10px",
-              }}
-              onClick={selectMetamask}
-            >
-              <span style={{ color: "white" }}>Ethereum</span>
-            </Button>
-            <Button
-              sx={{
-                display: "flex",
-                bgcolor: "black",
-                justifyContent: "center",
-                border: "1px solid gray",
-                background: "transparent",
-                marginBottom: "10px",
-              }}
-              onClick={selectSolana}
-            >
-              <span style={{ color: "white" }}>Solana</span>
-            </Button>
-            <Button
-              sx={{
-                display: "flex",
-                bgcolor: "black",
-                justifyContent: "center",
-                border: "1px solid gray",
-                background: "transparent",
-              }}
-              onClick={selectAptos}
-            >
-              <span style={{ color: "white" }}>Aptos</span>
-            </Button>
-          </Box>
+            {networks.map((network) => (
+              <Button
+                sx={{
+                  display: "flex",
+                  bgcolor: "black",
+                  justifyContent: "center",
+                  border: "1px solid gray",
+                  borderBottom:
+                    walletFlag === network.flag
+                      ? "5px solid black"
+                      : "1px solid gray",
+                  background: "#8770B8",
+                  marginBottom: "10px",
+                }}
+                onClick={network.select}
+                className="network-button"
+              >
+                {network.name}
+              </Button>
+            ))}
+          </div>
         </Fade>
       </Modal>
       <AppBar sx={{ background: "white", boxShadow: "none" }}>
@@ -384,6 +394,7 @@ export default function MainLayout({ getWallet }) {
               display: "flex",
               justifyContent: "flex-end",
               py: 1,
+              marginLeft: ".5em",
             }}
             className="dn"
           >
@@ -396,7 +407,7 @@ export default function MainLayout({ getWallet }) {
                 fontWeight: "bold",
               }}
               variant="contained"
-              size="large"
+              size="medium"
               onClick={changeWallet}
               className="btn"
             >
