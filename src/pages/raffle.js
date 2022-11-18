@@ -1674,7 +1674,14 @@ export default function Raffles({ walletFlag }) {
           paddingBottom: "50px",
         }}
       >
-        <Grid container spacing={2}>
+        <Grid
+          container
+          spacing={2}
+          sx={{
+            maxWidth: "80em",
+            margin: "0 auto",
+          }}
+        >
           {isLive ? (
             openRaffles.length ? (
               Raffle.length ? (
