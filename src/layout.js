@@ -8,8 +8,19 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
+import TwitterIcon from "@mui/icons-material/Twitter";
 import { styled } from "@mui/material/styles";
-import { Backdrop, Fade, Grid, Menu, MenuItem, Modal } from "@mui/material";
+import {
+  Backdrop,
+  Fade,
+  Grid,
+  Icon,
+  Menu,
+  MenuItem,
+  Modal,
+} from "@mui/material";
+
+import discordIcon from "./assets/img/discordIcon.webp";
 
 import { toast } from "react-toastify";
 //// metamask
@@ -32,7 +43,7 @@ import aptosIcon from "./assets/wallet/aptos.png";
 import metamask from "./assets/wallet/metamask.png";
 import footerLogo from "./assets/img/footerlogo.svg";
 
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -796,11 +807,48 @@ export default function MainLayout({ getWallet }) {
         <div style={{ borderBottom: "1px solid gray", display: "flex" }}>
           <Grid container spacing={2}>
             <Grid item sm={12} md={8} lg={8}>
-              <div>
+              <div
+                style={{
+                  marginLeft: "3em",
+                }}
+              >
                 <img
                   src={footerLogo}
                   style={{ width: "100%", maxWidth: "320px" }}
                 />
+                <br />
+                <br />
+                <br />
+                <span style={{ color: "white" }}>
+                  Powered By Nearverse Labs
+                </span>
+                <br />
+                <br />
+                <IconButton
+                  onClick={() => {
+                    window.open("https://twitter.com/NEARverseLabs", "_blank");
+                  }}
+                >
+                  <TwitterIcon />
+                </IconButton>
+                <IconButton
+                  onClick={() => {
+                    window.open(
+                      "https://discord.com/invite/rocketbois",
+                      "_blank"
+                    );
+                  }}
+                >
+                  <Icon>
+                    <img
+                      src={discordIcon}
+                      alt="DiscordIcon"
+                      style={{
+                        width: "100%",
+                      }}
+                    />
+                  </Icon>
+                </IconButton>
               </div>
             </Grid>
             <Grid item sm={12} md={4} lg={4} sx={{ width: "100%" }}>
