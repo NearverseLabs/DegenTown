@@ -771,8 +771,8 @@ const CardRaffle = ({ data, isOpen, getData, walletFlag }) => {
                   borderRadius: "5px",
                   border: "1px solid gray",
                   width: "100%",
-                  height: "200px",
                 }}
+                className="card-img"
               />
             </div>
             <div style={{ display: "flex" }}>
@@ -1016,13 +1016,12 @@ const CardRaffle = ({ data, isOpen, getData, walletFlag }) => {
         </BootstrapDialogTitle>
         <DialogContent>
           <Box mb={3}>
-            <div
-              style={{ textAlign: "center", width: "100%", height: "200px" }}
-            >
+            <div style={{ textAlign: "center", width: "100%" }}>
               <img
-                style={{ width: "90%", height: "200px", borderRadius: "5px" }}
+                style={{ width: "90%", borderRadius: "5px" }}
                 src={`${DOMAIN}/${data.image}`}
                 alt={`${DOMAIN}/${data.image}`}
+                className="card-img"
               />
             </div>
             <Typography

@@ -22,6 +22,9 @@
     line-height: 18px;
   }
 }
+.card-img {
+  aspect-ratio: 1/1;
+}
 button.network-button {
   color: #fff;
   transition: color 0.2s;
