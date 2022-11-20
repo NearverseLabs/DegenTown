@@ -5,6 +5,7 @@ export const AdminUsers = [
   "915821948573995048",
   "944835356350644296",
   "1020567653519208479",
+  "573992396841287690",
 ];
 export const SERVER_URL = "https://degentown.nearverselabs.com/api";
 export const DOMAIN = "https://degentown.nearverselabs.com/";
